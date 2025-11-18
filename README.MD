@@ -13,7 +13,7 @@ Molecular structure elucidation from spectroscopy is a fundamental challenge in 
 - **Multi-modal learning**: Integrates IR, ¹H-NMR, and ¹³C-NMR spectra through hierarchical attention mechanisms
 - **Fragment-based priors**: Learns count-aware fragment representations that capture both fragment identities and occurrences
 - **Two-stage training**: Pre-trains on fragment-to-molecule reconstruction, then fine-tunes with spectral conditioning
-- **Minimal preprocessing**: Operates directly on raw spectroscopic intensity arrays
+- **Minimal pre-processing**: Operates directly on raw spectroscopic intensity arrays
 
 ---
 
@@ -112,13 +112,6 @@ python test_spec2struct.py \
   --top_k 5 \
   --num_sequences 15
 ```
-
-### Inference Parameters
-
-- `temperature`: Controls sampling randomness (default=1.0)
-- `top_k`: Top-k tokens to sample from (default=5)
-- `num_sequences`: Number of candidate molecules to generate (default=15)
-
 ---
 
 ### Running Evaluation
