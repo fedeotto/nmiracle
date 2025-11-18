@@ -27,7 +27,7 @@ NMIRacle expects data in the following structure:
 datasets/
 ├── pretrain/                          # Stage 1: Fragment pre-training
 │   ├── smiles.npy                     # Molecular SMILES strings
-│   ├── substructures_vc.h5         # Fragment count matrices
+│   ├── substructures_vc.h5            # Fragment count matrices
 │   ├── substructure_counts.h5         # Fragment count matrices
 │   ├── pretrain_train_indices.npy     # Train split indices
 │   ├── pretrain_val_indices.npy       # Validation split indices
