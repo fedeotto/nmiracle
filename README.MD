@@ -50,7 +50,7 @@ The `spectra.h5` contains concatenated (in order):
 
 ## 🎓 Training
 
-### Stage 1: Fragment-to-Molecule Pre-training
+### Stage 1: fragment-to-molecule pre-training
 
 Train the model to reconstruct molecules from fragment representations:
 
@@ -64,7 +64,7 @@ python train.py \
   logger.wandb.enabled=true
 ```
 
-### Stage 2: Spectra-to-Molecule Fine-tuning
+### Stage 2: spectra-to-molecule fine-tuning
 
 Fine-tune with spectral conditioning (requires Stage 1 checkpoint):
 
@@ -82,24 +82,13 @@ python train.py \
   logger.wandb.enabled=true
 ```
 
-### Resuming Training
+### Resuming training
 
 ```bash
 python train.py \
   resume.checkpoint_path=/path/to/checkpoint.ckpt \
   trainer.max_epochs=300
 ```
-
-### Configuration
-
-Training is managed via [Hydra](https://hydra.cc/). Configuration files are in `configs/`:
-
-- `nmiracle_config.yaml`: main configuration file
-- `configs/data/`: dataset configurations
-- `configs/model/`: model architecture settings
-- `configs/trainer/`: training hyperparameters
-
----
 
 ## 🧪 Inference
 
