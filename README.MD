@@ -1,0 +1,189 @@
+# NMIRacle: Scalable Structure Elucidation from IR and NMR Spectra
+
+**NMIRacle** (NMr-IR orACLE) is a deep learning framework for *de novo* molecular structure elucidation from multi-modal spectroscopic data. The model learns to generate molecular structures (SMILES) directly from raw IR, ¹H-NMR, and ¹³C-NMR spectra through a two-stage training approach that combines fragment-based molecular priors with multi-spectral conditioning.
+
+---
+
+## 🔬 Overview
+
+Molecular structure elucidation from spectroscopy is a fundamental challenge in chemistry. NMIRacle addresses this by:
+
+- **Multi-modal learning**: Integrates IR, ¹H-NMR, and ¹³C-NMR spectra through hierarchical attention mechanisms
+- **Fragment-based priors**: Learns count-aware fragment representations that capture both fragment identities and occurrences
+- **Two-stage training**: Pre-trains on fragment-to-molecule reconstruction, then fine-tunes with spectral conditioning
+- **Minimal preprocessing**: Operates directly on raw spectroscopic intensity arrays
+
+---
+
+## 📦 Data Preparation
+
+### Dataset Structure
+
+NMIRacle expects data in the following structure:
+
+```
+datasets/
+├── pretrain/                          # Stage 1: Fragment pre-training
+│   ├── smiles.npy                     # Molecular SMILES strings
+│   ├── substructures_vc.h5         # Fragment count matrices
+│   ├── substructure_counts.h5         # Fragment count matrices
+│   ├── pretrain_train_indices.npy     # Train split indices
+│   ├── pretrain_val_indices.npy       # Validation split indices
+│   └── pretrain_test_indices.npy      # Test split indices
+│
+└── alberts/                           # Stage 2: Spectra fine-tuning
+    ├── smiles.npy                     # Molecular SMILES strings
+    ├── spectra.h5                     # Multi-modal spectra (IR, ¹H, ¹³C)
+    ├── substructure_counts.h5         # Fragment counts (for multi-task)
+    └── split_indices.p                # Train/val/test splits
+```
+
+### Spectra Format (HDF5)
+
+The `spectra.h5` contains concatenated (in order):
+- `ir`: IR spectra (1,800 features)
+- `hnmr`: ¹H-NMR spectra (10,000 features)
+- `cnmr`: ¹³C-NMR spectra (10,000 features)
+---
+
+## 🎓 Training
+
+### Stage 1: Fragment-to-Molecule Pre-training
+
+Train the model to reconstruct molecules from fragment representations:
+
+```bash
+cd nmiracle
+python train.py \
+  training_stage=sub2struct \
+  data.dataset_name=pretrain_dataset \
+  data.batch_size.train=256 \
+  trainer.max_epochs=100 \
+  logger.wandb.enabled=true
+```
+
+### Stage 2: Spectra-to-Molecule Fine-tuning
+
+Fine-tune with spectral conditioning (requires Stage 1 checkpoint):
+
+```bash
+python train.py \
+  training_stage=spec2struct \
+  data.dataset_name=alberts_dataset \
+  data.use_ir=true \
+  data.use_hnmr=true \
+  data.use_cnmr=true \
+  model.pretrained_structure_model_path=/path/to/stage1/checkpoint.ckpt \
+  model.use_multitask=true \
+  data.batch_size.train=128 \
+  trainer.max_epochs=300 \
+  logger.wandb.enabled=true
+```
+
+### Resuming Training
+
+```bash
+python train.py \
+  resume.checkpoint_path=/path/to/checkpoint.ckpt \
+  trainer.max_epochs=300
+```
+
+### Configuration
+
+Training is managed via [Hydra](https://hydra.cc/). Configuration files are in `configs/`:
+
+- `nmiracle_config.yaml`: Main configuration
+- `configs/data/`: Dataset configurations
+- `configs/model/`: Model architecture settings
+- `configs/trainer/`: Training hyperparameters
+
+**Key hyperparameters:**
+- Learning rate: 1e-5 (Adam optimizer)
+- Batch size: 128-256 (depending on stage and GPU memory)
+- Max epochs: 100 (Stage 1), 300 (Stage 2)
+- Early stopping: patience=20 epochs
+
+---
+
+## 🧪 Inference
+
+### Testing on fragments-to-molecule task
+
+```bash
+# Test Stage 1 (fragment-to-molecule)
+python test_sub2struct.py \
+  --model_path nmiracle/ckpts/nmiracle_sub2struct \
+  --checkpoint best.ckpt \
+  --num_sequences 15
+```
+
+### Testing on spectra-to-molecule task
+
+```bash
+# Test on multiple spectral modalities
+python test_spec2struct.py \
+  --model_path nmiracle/ckpts/nmiracle_spec2struct_ir_hnmr_cnmr \
+  --checkpoint epoch=295-val_loss=0.15.ckpt \
+  --temperature 1.0 \
+  --top_k 5 \
+  --num_sequences 15
+```
+
+### Inference Parameters
+
+- `temperature`: Controls sampling randomness (0.5-1.5, default=1.0)
+- `top_k`: Top-k tokens to sample from (1-10, default=5)
+- `num_sequences`: Number of candidate molecules to generate (1-50, default=15)
+
+---
+
+### Running Evaluation
+
+```bash
+# Compute comprehensive metrics
+python nmiracle/analysis/compute_metrics.py \
+  --predictions_file results/predictions.json \
+  --ground_truth_file datasets/alberts/test.json \
+  --output_dir results/metrics/
+```
+
+---
+
+## 📊 Pre-trained Models
+
+Pre-trained checkpoints are available for download:
+
+| Model | Training Data | Modalities | Top-1 Acc | Download |
+|-------|--------------|------------|-----------|----------|
+| NMIRacle-Full | 3.7M molecules | IR+¹H+¹³C | 0.48 | [Link](#) |
+| NMIRacle-NMR | 3.7M molecules | ¹H+¹³C | 0.39 | [Link](#) |
+| NMIRacle-Stage1 | 3.7M molecules | Fragments | 0.70 | [Link](#) |
+
+---
+
+## 🤝 Citation
+
+If you use NMIRacle in your research, please cite:
+
+```bibtex
+@article{nmiracle2025,
+  title={NMIRacle: Scalable Structure Elucidation from IR and NMR Spectra},
+  author={Your Name et al.},
+  journal={arXiv preprint arXiv:XXXX.XXXXX},
+  year={2025}
+}
+```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Built with [PyTorch](https://pytorch.org/) and [PyTorch Lightning](https://lightning.ai/)
+- Inspired by [NMR2Struct](https://github.com/MarklandGroup/NMR2Struct) and related work
+
+
+**⭐ If you find NMIRacle useful, please star the repository!**
