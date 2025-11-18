@@ -105,7 +105,6 @@ python test_sub2struct.py \
 ### Testing on spectra-to-molecule task
 
 ```bash
-# Test on multiple spectral modalities
 python test_spec2struct.py \
   --model_path nmiracle/ckpts/nmiracle_spec2struct_ir_hnmr_cnmr \
   --checkpoint epoch=295-val_loss=0.15.ckpt \
@@ -116,9 +115,9 @@ python test_spec2struct.py \
 
 ### Inference Parameters
 
-- `temperature`: Controls sampling randomness (0.5-1.5, default=1.0)
-- `top_k`: Top-k tokens to sample from (1-10, default=5)
-- `num_sequences`: Number of candidate molecules to generate (1-50, default=15)
+- `temperature`: Controls sampling randomness (default=1.0)
+- `top_k`: Top-k tokens to sample from (default=5)
+- `num_sequences`: Number of candidate molecules to generate (default=15)
 
 ---
 
