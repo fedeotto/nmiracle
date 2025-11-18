@@ -1,0 +1,10 @@
+# path to root directory
+root_dir: ${oc.env:PROJECT_ROOT}
+
+# path to data directory
+data_dir: ${paths.root_dir}/datasets
+
+hydra_dir: ${hydra:run.dir}
+
+# path to working directory
+work_dir: ${hydra:runtime.cwd}

@@ -1,0 +1,6 @@
+wandb:
+  offline: False
+  project: ${wandb_project}
+  entity: fedeotto
+  # name: null
+  enabled: false

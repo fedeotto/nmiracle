@@ -1,0 +1,68 @@
+# Model architecture
+
+use_substructures: ${data.use_substructures}
+pretrained_structure_path: ${paths.root_dir}/important_ckpts/pretrain_mynmr2struct_new/checkpoints/epoch=411-val_loss=0.07.ckpt
+
+# Structure prediction model (transformer)
+structure_model:
+  d_model: 128
+  nhead: 8
+  num_encoder_layers: 6
+  num_decoder_layers: 6
+  dim_feedforward: 1024
+  layer_norm_eps: 1e-05
+  batch_first: true
+  norm_first: false
+  dropout: 0.1
+
+# Spectrum encoder configuration
+spectrum_encoder:
+  d_model: 128
+  use_ir: ${data.use_ir}
+  use_hnmr: ${data.use_hnmr}
+  use_cnmr: ${data.use_cnmr}
+  n_ir_features: ${data.n_ir_features}
+  n_hnmr_features: ${data.n_hnmr_features}
+  n_cnmr_features: ${data.n_cnmr_features}
+
+multispectra_encoder:
+  d_model: 128
+  nhead: 4
+  fusion_layers: 2
+  spectrum_encoder_layers: 2
+  ir_reduction_factor: 9
+  hnmr_reduction_factor: 50
+  fusion_scheme: transformer
+  shared_encoder: false
+  use_ir: ${data.use_ir}
+  use_hnmr: ${data.use_hnmr}
+  use_cnmr: ${data.use_cnmr}
+  cnmr_binary: ${data.cnmr_binary}
+  cnmr_binary_bins: ${data.cnmr_binary_bins}
+  pool_type: seq
+
+
+# Substructure prediction model (encoder-only)
+substructure_model:
+  d_model: 128
+  nhead: 4
+  num_layers: 4
+  dim_feedforward: 1024
+  dropout: 0.1
+  num_substructures: ${data.num_substructures}
+  layer_norm_eps: 1e-05
+  enable_nested_tensor: true
+  activation: relu
+  norm_first: false
+  batch_first: true
+  bias: true
+  pool_type: seq
+
+# Multi-task learning
+substructure_weight: 1.0
+structure_weight: 1.0
+
+# Optimization
+optimizer:
+  lr: 0.00001
+  # lr_patience: 5

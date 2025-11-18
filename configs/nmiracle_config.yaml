@@ -1,0 +1,26 @@
+resume:
+  checkpoint_path: null
+
+training_stage: spec2struct
+wandb_project: my_nmr2struct_implementation
+model_name: nmiracle
+# # seed for random number generators in pytorch, numpy and python.random
+seed: 42
+
+# Hydra settings
+hydra:
+  mode: RUN
+  
+  run:
+    dir: hydra/singlerun/${model_name}-${now:%Y-%m-%d}-${now:%H-%M-%S}/
+  # sweep:
+  #   dir: hydra/multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+
+defaults:
+  - _self_
+  - data: nmiracle
+  - model: nmiracle
+  - logger: wandb
+  - paths: default
+  - trainer: gpu
+  - callbacks: default

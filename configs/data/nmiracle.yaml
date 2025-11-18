@@ -1,0 +1,32 @@
+# Data paths
+defaults:
+  - _self_
+  - alberts_dataset
+
+seed: 42
+
+# Spectrum processing
+use_ir: true
+use_hnmr: true
+use_cnmr: true
+use_substructures: true
+use_formula: true
+cnmr_binary: true
+
+num_substructures: 991
+
+# Batch sizes
+batch_size:
+  train: 64
+  val: 64
+  test: 64
+  
+num_workers:
+  train: 0
+  val: 0
+  test: 0
+
+prefetch_factor:
+  train: null
+  val: null
+  test: null
