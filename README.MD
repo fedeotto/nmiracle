@@ -1,3 +1,4 @@
+<img src="assets/model_diagram.pdf" alt="NMIRacle Overview Diagram" width="800"/>
 # NMIRacle: Scalable Structure Elucidation from IR and NMR Spectra
 
 **NMIRacle** (NMr-IR orACLE) is a deep learning framework for *de novo* molecular structure elucidation from multi-modal spectroscopic data. The model learns to generate molecular structures (SMILES) directly from raw IR, ¹H-NMR, and ¹³C-NMR spectra through a two-stage training approach that combines fragment-based molecular priors with multi-spectral conditioning.
@@ -92,16 +93,10 @@ python train.py \
 
 Training is managed via [Hydra](https://hydra.cc/). Configuration files are in `configs/`:
 
-- `nmiracle_config.yaml`: Main configuration
-- `configs/data/`: Dataset configurations
-- `configs/model/`: Model architecture settings
-- `configs/trainer/`: Training hyperparameters
-
-**Key hyperparameters:**
-- Learning rate: 1e-5 (Adam optimizer)
-- Batch size: 128-256 (depending on stage and GPU memory)
-- Max epochs: 100 (Stage 1), 300 (Stage 2)
-- Early stopping: patience=20 epochs
+- `nmiracle_config.yaml`: main configuration file
+- `configs/data/`: dataset configurations
+- `configs/model/`: model architecture settings
+- `configs/trainer/`: training hyperparameters
 
 ---
 
@@ -146,19 +141,6 @@ python nmiracle/analysis/compute_metrics.py \
   --ground_truth_file datasets/alberts/test.json \
   --output_dir results/metrics/
 ```
-
----
-
-## 📊 Pre-trained Models
-
-Pre-trained checkpoints are available for download:
-
-| Model | Training Data | Modalities | Top-1 Acc | Download |
-|-------|--------------|------------|-----------|----------|
-| NMIRacle-Full | 3.7M molecules | IR+¹H+¹³C | 0.48 | [Link](#) |
-| NMIRacle-NMR | 3.7M molecules | ¹H+¹³C | 0.39 | [Link](#) |
-| NMIRacle-Stage1 | 3.7M molecules | Fragments | 0.70 | [Link](#) |
-
 ---
 
 ## 🤝 Citation
