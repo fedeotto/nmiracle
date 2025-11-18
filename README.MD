@@ -1,4 +1,4 @@
-<img src="assets/model_diagram.pdf" alt="NMIRacle Overview Diagram" width="800"/>
+<img src="assets/nmiracle.png" alt="NMIRacle Overview Diagram" width="800"/>
 # NMIRacle: Scalable Structure Elucidation from IR and NMR Spectra
 
 **NMIRacle** (NMr-IR orACLE) is a deep learning framework for *de novo* molecular structure elucidation from multi-modal spectroscopic data. The model learns to generate molecular structures (SMILES) directly from raw IR, ¹H-NMR, and ¹³C-NMR spectra through a two-stage training approach that combines fragment-based molecular priors with multi-spectral conditioning.
