@@ -33,7 +33,7 @@ datasets/
 │   ├── pretrain_val_indices.npy       # Validation split indices
 │   └── pretrain_test_indices.npy      # Test split indices
 │
-└── alberts/                           # Stage 2: Spectra fine-tuning
+└── multispectra/                      # Stage 2: Spectra fine-tuning
     ├── smiles.npy                     # Molecular SMILES strings
     ├── spectra.h5                     # Multi-modal spectra (IR, ¹H, ¹³C)
     ├── substructure_counts.h5         # Fragment counts (for multi-task)
@@ -55,8 +55,7 @@ The `spectra.h5` contains concatenated (in order):
 Train the model to reconstruct molecules from fragment representations:
 
 ```bash
-cd nmiracle
-python train.py \
+python -m nmiracle.train \
   training_stage=sub2struct \
   data.dataset_name=pretrain_dataset \
   data.batch_size.train=256 \
@@ -69,7 +68,7 @@ python train.py \
 Fine-tune with spectral conditioning (requires Stage 1 checkpoint):
 
 ```bash
-python train.py \
+python -m nmiracle.train.py \
   training_stage=spec2struct \
   data.dataset_name=alberts_dataset \
   data.use_ir=true \
