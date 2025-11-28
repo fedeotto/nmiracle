@@ -104,14 +104,12 @@ class MultiTaskSpectra2Structure(Spectra2Structure):
         outputs = super().forward(batch)
 
         #Add substructure prediction
-        spectra = batch['spectra']
-        spectrum_features, spectrum_mask = self.spectrum_encoder(spectra)
-        spectra_pooled = self.pooler(spectrum_features, padding_mask=spectrum_mask)
-        batch_size = spectra_pooled.size(0)
-        identity_matrix = torch.eye(self.num_substructures, device=spectra_pooled.device)
+        pooled = self.pooler(outputs['structure_features'], padding_mask=outputs['structure_features_mask'])
+        batch_size = pooled.size(0)
+        identity_matrix = torch.eye(self.num_substructures, device=pooled.device)
         one_hot = identity_matrix.unsqueeze(0).expand(batch_size, -1, -1)
 
-        expanded_features = spectra_pooled.unsqueeze(1).expand(-1, self.num_substructures, -1)
+        expanded_features = pooled.unsqueeze(1).expand(-1, self.num_substructures, -1)
         combined = torch.cat([
             expanded_features.reshape(batch_size * self.num_substructures, -1),
             one_hot.reshape(batch_size * self.num_substructures, -1)

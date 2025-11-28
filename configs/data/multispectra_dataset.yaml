@@ -1,7 +1,7 @@
-dataset_name: alberts_dataset
+dataset_name: multispectra_dataset
 training_stage: ${training_stage}
-data_dir: ${paths.data_dir}/alberts
-max_molecule_len: 76 #77 is what turns for SELFIES, 76 for SMILES
+data_dir: ${paths.data_dir}/multispectra
+max_molecule_len: 76 
 
 alphabet: ${paths.root_dir}/common/alphabet.npy
 
@@ -9,7 +9,7 @@ num_substructures: 991
 max_substructures_len: 103
 max_substructures_count: 232 
 
-# Alberts spectrum settings
+# Multi-spectra dataset settings
 n_ir_features: 1800
 n_hnmr_features: 10000
 n_cnmr_features: 10000

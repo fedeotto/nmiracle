@@ -80,9 +80,6 @@ class Sub2StructModule(BaseModule):
         return loss
     
     def get_optimizer_params(self):
-        """
-        Get optimizers based on the training stage
-        """
         return {
             'lr': 1.0e-5,
             'betas': (0.9, 0.98),
@@ -132,7 +129,7 @@ class Spec2StructModule(BaseModule):
 
         loss, loss_info = self.model.compute_loss(outputs, batch)
         
-        # Log metrics
+        # Log
         self.log('val_loss', loss, on_step=False, on_epoch=True, prog_bar=True, sync_dist=True, batch_size=batch_size)
         for name, value in loss_info.items():
             self.log(f'val_{name}', value, on_step=False, on_epoch=True, sync_dist=True, batch_size=batch_size)
@@ -166,8 +163,13 @@ class Spec2StructModule(BaseModule):
         outputs = self.model(batch)
         
         loss, loss_info = self.model.compute_loss(outputs, batch)
-        # Log metrics
+
+        # Log
         self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, sync_dist=True, batch_size=batch_size)
+
+        for name, value in loss_info.items():
+            self.log(f'val_{name}', value, on_step=False, on_epoch=True, sync_dist=True, batch_size=batch_size)
+
         return loss
 
     def get_optimizer_params(self):

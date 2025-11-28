@@ -1,13 +1,11 @@
 import torch
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
-from nmiracle.data.datasets import AlbertsDataset,PreTrainDataset
+from nmiracle.data.datasets import MultiSpectraDataset,PreTrainDataset
 from nmiracle.utils.utils import seed_worker
 import numpy as np
 import os
 from pathlib import Path
-import pickle
-import h5py
 
 class SpectralDataModule(pl.LightningDataModule):
     def __init__(
@@ -35,12 +33,12 @@ class SpectralDataModule(pl.LightningDataModule):
     def setup(self, stage=None):
         """Set up datasets for training, validation, and testing"""
         if self.training_stage == "sub2struct":
-            print(f"Setting pretrain dataset for substructure-to-structure training...")
+            print(f"Setting pretrain dataset for fragments-to-molecule pre-training...")
             self._setup_pretrain_dataset(stage=stage)
         
         elif self.training_stage == "spec2struct":
-            print("Setting up Alberts dataset for spectra-to-structure training...")
-            self._setup_alberts_dataset(stage=stage)
+            print("Setting up multi-spectra dataset for spectra-to-molecule fine-tuning...")
+            self._setup_multispectra_dataset(stage=stage)
         else:
             raise ValueError(f"Unknown training stage: {self.training_stage}")
 
@@ -73,7 +71,7 @@ class SpectralDataModule(pl.LightningDataModule):
         if stage == "test" or stage is None:
             self.test_dataset = PreTrainDataset(indices=test_indices, **common_args)
 
-    def _setup_alberts_dataset(self, stage=None):
+    def _setup_multispectra_dataset(self, stage=None):
         """Set up datasets for spectra-to-all training"""        
 
         data_dir = self.config.data_dir
@@ -101,11 +99,11 @@ class SpectralDataModule(pl.LightningDataModule):
         }
         
         if stage == 'fit' or stage is None:
-            self.train_dataset = AlbertsDataset(indices=train_indices, **common_args)
-            self.val_dataset = AlbertsDataset(indices=val_indices, **common_args)
+            self.train_dataset = MultiSpectraDataset(indices=train_indices, **common_args)
+            self.val_dataset = MultiSpectraDataset(indices=val_indices, **common_args)
 
         if stage == 'test' or stage is None:
-            self.test_dataset = AlbertsDataset(indices=test_indices, **common_args)
+            self.test_dataset = MultiSpectraDataset(indices=test_indices, **common_args)
 
     def train_dataloader(self):
         return DataLoader(

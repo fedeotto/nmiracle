@@ -1,7 +1,7 @@
 # Data paths
 defaults:
   - _self_
-  - alberts_dataset
+  - multispectra_dataset
 
 seed: 42
 

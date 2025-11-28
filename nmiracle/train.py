@@ -1,6 +1,4 @@
 import os
-os.environ['WANDB_API_KEY']        = '225f36ee6832486feffbf260ef5884cdd75d2af6'
-os.environ['HYDRA_FULL_ERROR']     = '1'
 import torch
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping, LearningRateMonitor
@@ -128,6 +126,9 @@ def main(config: DictConfig):
     if torch.cuda.is_available():
         accelerator = "gpu"
         devices = torch.cuda.device_count()
+    # elif torch.backends.mps.is_available():
+    #     accelerator = "mps"
+    #     devices = 1
     else:
         accelerator = "cpu"
         devices = 1  # For CPU training, use 1 device

@@ -1,7 +1,5 @@
-from rdkit import Chem
 import torch
 import numpy as np
-import selfies as sf
 import random
 
 def seed_worker(worker_id: int) -> None:

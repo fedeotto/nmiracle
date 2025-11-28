@@ -1,18 +1,12 @@
 import torch
 from torch.utils.data import Dataset
 import numpy as np
-import pickle
 from scipy.signal import find_peaks
 import h5py
 from pathlib import Path
-import torch.nn.functional as F
-from rdkit import Chem
 import os
 
-class AlbertsDataset(Dataset):
-    """
-    Dataset for spectra-to-structure training using the Alberts dataset
-    """
+class MultiSpectraDataset(Dataset):
     def __init__(
         self,
         data_dir,
@@ -39,7 +33,6 @@ class AlbertsDataset(Dataset):
         self.tokenizer = tokenizer
         self.max_molecule_len = max_molecule_len
         self.data_dir = data_dir
-
         self.indices = indices
 
         #load SMILES
@@ -106,18 +99,11 @@ class AlbertsDataset(Dataset):
         
         if self.use_cnmr:            
             if self.cnmr_binary:
-                # Use the same approach as NMR2Struct for processing CNMR spectra
-                # If continuous spectrum (10,000 points), find peaks and convert to ppm
                 if len(cnmr) == 10000:  # Continuous spectrum                    
-                    # Find peaks - consider a point a peak if it's at least 10% of max intensity
-                    # and at least 5 points apart from other peaks
                     peaks, _ = find_peaks(cnmr, height=0.1*np.max(cnmr), distance=5)
-                    
-                    # Convert peak indices to ppm values (0-220 ppm range)
                     ppm_range = np.linspace(0, 220, 10000)
                     peak_positions = ppm_range[peaks]
                 else:
-                    # Already a list of peak positions
                     peak_positions = np.array(cnmr)
                 
                 # Create binary representation with specified number of bins
@@ -154,8 +140,8 @@ class AlbertsDataset(Dataset):
         spectra_file = self._open_spectra_file()
         spectrum = spectra_file['spectra'][data_idx]
 
-        # Process the 
-        # raw spectra stacked in order IR (1,800), HNMR (10,000), CNMR (10,000) in order here
+        # Process the raw spectra in order 
+        #IR (1,800), HNMR (10,000), CNMR (10,000) in order here
         processed_spectrum = self._process_spectrum(spectrum)
         smiles = self.smiles[data_idx]
 

@@ -20,7 +20,7 @@ class TransformerModel(nn.Module):
         layer_norm_eps=1e-05,
         batch_first=True,
         norm_first=False,
-        vocab_size=100,  # SMILES vocabulary size
+        vocab_size=100, 
         pad_token=0,
     ):
         super().__init__()
@@ -60,25 +60,8 @@ class TransformerModel(nn.Module):
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
     
-    def forward(self, src, tgt=None, src_key_padding_mask=None):
-        """
-        Forward pass through the transformer
-        
-        Args:
-            src: Encoder input [batch_size, src_len, d_model]
-            tgt: Decoder input [batch_size, tgt_len] (optional)
-            src_key_padding_mask: Mask for padding in source [batch_size, src_len]
-        """
-        batch_size = src.size(0)
-        
-        #No pos enc to source only to tgt.
-        # src = self.pos_encoder(src)
-        
-        # For inference with no target provided
-        if tgt is None:
-            tgt = torch.zeros(batch_size, 1, dtype=torch.long, device=src.device) + self.pad_token + 1  # Start token
-        
-        # Create target mask for causal attention
+    def forward(self, src, tgt, src_key_padding_mask=None):
+
         tgt_mask = self._generate_square_subsequent_mask(tgt.size(1), tgt.device)
         
         # Get target padding mask
