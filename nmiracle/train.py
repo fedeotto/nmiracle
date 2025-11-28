@@ -20,11 +20,11 @@ rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 def main(config: DictConfig):
     assert config.training_stage in ['sub2struct', 'spec2struct'], \
         f"Unsupported training stage: {config.training_stage}"
-    
-    # Check pairing: spec2struct requires alberts_dataset
+
+    # Check pairing: spec2struct requires multispectra_dataset
     if config.training_stage == 'spec2struct':
-        assert config.data.dataset_name == 'alberts_dataset', \
-            "Training stage 'spec2struct' requires 'alberts_dataset'"
+        assert config.data.dataset_name == 'multispectra_dataset', \
+            "Training stage 'spec2struct' requires 'multispectra_dataset'"
     
     # Check pairing: sub2struct requires pretrain_dataset
     if config.training_stage == 'sub2struct':

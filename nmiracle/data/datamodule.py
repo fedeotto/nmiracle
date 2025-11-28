@@ -113,6 +113,7 @@ class SpectralDataModule(pl.LightningDataModule):
             num_workers=self.num_workers.train,
             prefetch_factor=self.prefetch_factor.train,
             pin_memory=True,
+            drop_last=True,
             generator=self.generator,
             worker_init_fn=seed_worker
         )
