@@ -69,19 +69,15 @@ class Sub2Structure(BaseModel):
         """Full forward pass with decoder"""
         substructures = batch['substructures']
         substructure_counts = batch['substructure_counts']
+        decoder_input = batch['decoder_input']
 
         src_key_pad_mask = (substructures == 0)
         substructure_features = self.substructure_embedding(substructures)  
         count_features = self.substructure_count_embedding(substructure_counts)
 
-        # Combine embeddings (element-wise addition)
         combined_features = substructure_features + count_features    
         projected_features = self.mlp_proj(combined_features)
         
-        # Get decoder inputs for teacher forcing
-        decoder_input = batch['decoder_input']
-        
-        # Forward with teacher forcing using pre-created decoder input
         structure_logits = self.structure_model(
             projected_features,
             decoder_input,

@@ -3,14 +3,6 @@ import pytorch_lightning as pl
 from nmiracle.models.sub2structmodel import Sub2Structure
 from nmiracle.models.spec2structmodel import Spectra2Structure, MultiTaskSpectra2Structure
 import gc
-from common.eval_utils import (canonicalize_smiles, 
-                                calculate_tanimoto_similarity, 
-                                is_valid_smiles, 
-                                compute_levenshtein_distance, 
-                                compute_mces_distance, 
-                                calculate_maccs_similarity, 
-                                calculate_rdkit_similarity)
-import torch.nn as nn
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
 
@@ -29,6 +21,49 @@ class BaseModule(pl.LightningModule):
     def on_epoch_end(self):
         torch.cuda.empty_cache()
         gc.collect()
+
+    def on_train_epoch_start(self):
+        """Evaluate generation on a single validation batch at the end of each training epoch (rank 0 only)."""
+        if not self.trainer.is_global_zero:
+            return
+        
+        self.eval()
+        try:
+            # Get a single batch from validation dataloader
+            val_dataloader = self.trainer.datamodule.val_dataloader()
+            val_batch = next(iter(val_dataloader))
+            
+            # Move batch to the correct device
+            val_batch = {k: v.to(self.device) if isinstance(v, torch.Tensor) else v 
+                         for k, v in val_batch.items()}
+            
+            # Forward pass to get structure features
+            with torch.no_grad():
+                outputs = self.model(val_batch)
+            
+            # Get max molecule length from dataset
+            max_molecule_len = self.trainer.datamodule.val_dataset.max_molecule_len
+            
+            # Evaluate generation
+            generation_metrics = self.model.evaluate_generation(
+                structure_features=outputs['structure_features'],
+                structure_features_mask=outputs['structure_features_mask'],
+                true_smiles=val_batch['molecules'],
+                max_molecule_len=max_molecule_len,
+                max_samples=None,
+            )
+
+            # Log metrics (no sync_dist needed since only rank 0 runs this)
+            batch_size = len(val_batch['molecules'])
+            for name, value in generation_metrics.items():
+                self.log(f'val_generation/{name}', value, on_step=False, on_epoch=True, 
+                         sync_dist=False, batch_size=batch_size, rank_zero_only=True)
+                        
+        except Exception as e:
+            print(f"Warning: Generation evaluation failed: {e}")
+        
+        finally:
+            self.train()
 
 class Sub2StructModule(BaseModule):
     def __init__(self, config, tokenizer):
@@ -61,21 +96,6 @@ class Sub2StructModule(BaseModule):
         self.log('val_loss', loss, prog_bar=True, sync_dist=True, batch_size=batch_size)
         if 'structure_loss' in loss_info:
             self.log('val_structure_loss', loss_info['structure_loss'], prog_bar=True, sync_dist=True, batch_size=batch_size)
-        
-        max_molecule_len = self.trainer.datamodule.val_dataset.max_molecule_len
-        # Evaluate molecule generation (only for a few batches)
-        # if batch_idx < 5:
-        #     generation_metrics = self.model.evaluate_generation(
-        #         structure_features=outputs['structure_features'],
-        #         structure_features_mask=outputs['structure_features_mask'],
-        #         true_smiles=batch['molecules'],
-        #         max_molecule_len=max_molecule_len,
-        #         max_samples=None,
-        #     )
-            
-            # Log the metrics manually (since the metrics won't be logged by the method anymore)
-            # for name, value in generation_metrics.items():
-            #     self.log(f'val_generation/{name}', value, on_step=False, on_epoch=True, sync_dist=True, batch_size=batch_size)
         
         return loss
     
@@ -134,21 +154,6 @@ class Spec2StructModule(BaseModule):
         for name, value in loss_info.items():
             self.log(f'val_{name}', value, on_step=False, on_epoch=True, sync_dist=True, batch_size=batch_size)
 
-        max_molecule_len = self.trainer.datamodule.val_dataset.max_molecule_len
-        # # Evaluate molecule generation (only for a few batches)
-        # if batch_idx < 5:
-        #     # Call compute_generation_metrics directly
-        #     generation_metrics = self.evaluate_generation(
-        #         structure_features=outputs['structure_features'],
-        #         structure_features_mask=outputs['structure_features_mask'],
-        #         true_smiles=batch['molecules'],
-        #         max_molecule_len=max_molecule_len,
-        #         max_samples=None,
-        #         log_prefix="val"
-        #     )
-        #     for name, value in generation_metrics.items():
-        #         self.log(f'val_generation/{name}', value, on_step=False, on_epoch=True, sync_dist=True, batch_size=batch_size)
-
         # If multitask calculate and log substructure-prediction metrics
         if hasattr(self.model, 'calculate_substructure_metrics'):
             metrics = self.model.calculate_substructure_metrics(outputs=outputs, batch=batch)
@@ -156,7 +161,8 @@ class Spec2StructModule(BaseModule):
                 self.log(f'val_{name}', value, on_step=False, on_epoch=True, sync_dist=True, batch_size=batch_size)
 
         return loss
-    
+
+
     def training_step(self, batch, batch_idx):
         # Get loss for spectra-to-structure stage
         batch_size = len(batch['molecules'])

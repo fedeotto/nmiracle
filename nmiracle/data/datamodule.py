@@ -5,7 +5,6 @@ from nmiracle.data.datasets import MultiSpectraDataset,PreTrainDataset
 from nmiracle.utils.utils import seed_worker
 import numpy as np
 import os
-from pathlib import Path
 
 class SpectralDataModule(pl.LightningDataModule):
     def __init__(
@@ -46,14 +45,13 @@ class SpectralDataModule(pl.LightningDataModule):
         # Get paths from config
         data_dir = self.config.data_dir
 
-        # Check for existing indices
-        train_indices_path = Path(data_dir) / "pretrain_train_indices.npy"
-        val_indices_path = Path(data_dir) / "pretrain_val_indices.npy"
-        test_indices_path = Path(data_dir) / "pretrain_test_indices.npy"
-
-        train_indices = np.load(train_indices_path)
-        val_indices = np.load(val_indices_path)
-        test_indices = np.load(test_indices_path)
+        # Load split indices
+        splits_path = os.path.join(data_dir, "split_indices.p")
+        splits = np.load(splits_path, allow_pickle=True)
+        
+        train_indices = splits['train']
+        val_indices = splits['val']
+        test_indices = splits['test']
 
         # Common dataset arguments
         common_args = {
@@ -76,7 +74,7 @@ class SpectralDataModule(pl.LightningDataModule):
 
         data_dir = self.config.data_dir
 
-        # Load split indices (move logic from Dataset to DataModule)
+        # Load split indices
         splits_path = os.path.join(data_dir, "split_indices.p")
         splits = np.load(splits_path, allow_pickle=True)
         

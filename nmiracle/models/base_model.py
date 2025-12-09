@@ -221,7 +221,7 @@ class BaseModel(nn.Module):
                 num_sequences=num_sequences
             ) 
 
-            batch_size, num_seqs, seq_len = generated_ids.shape
+            batch_size = generated_ids.shape[0]
             # Decode sequences
             generated_smiles_lists = []
 
