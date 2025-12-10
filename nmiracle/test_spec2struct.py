@@ -10,20 +10,33 @@ from nmiracle.data.tokenizer import BasicSmilesTokenizer
 import os
 from tqdm import tqdm
 import numpy as np
+import argparse
 
 # rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
-
 os.environ['HYDRA_FULL_ERROR']     = '1'
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-MODEL_PATH = "nmiracle/ckpts/spec2struct_ir_hnmr_cnmr"
+MODEL_PATH = "nmiracle/ckpts/spec2struct_ir_hnmr"
 CKPT_NAME  = "epoch=295-val_loss=0.15.ckpt"
 NUM_WORKERS = 0  # Set to 0 for no multiprocessing, adjust as needed
 PREFETCH_FACTOR = None  # Set to None for no prefetching, adjust as needed
 BATCH_SIZE = 8  # Adjust batch size as needed
 TEMPERATURE = 1.0
 TOP_K = 5
-NUM_SEQUENCES = 3
+NUM_SEQUENCES = 15
+MAX_MOLECULES = None  # None means use all test samples
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model_path", type=str, default=MODEL_PATH)
+    parser.add_argument("--checkpoint", type=str, default=CKPT_NAME)
+    parser.add_argument("--batch_size", type=int, default=BATCH_SIZE)
+    parser.add_argument("--temperature", type=float, default=TEMPERATURE)
+    parser.add_argument("--top_k", type=int, default=TOP_K)
+    parser.add_argument("--num_sequences", type=int, default=NUM_SEQUENCES)
+    parser.add_argument("--max_molecules", type=int, default=MAX_MOLECULES)
+    parser.add_argument("--num_workers", type=int, default=NUM_WORKERS)
+    parser.add_argument("--output_file", type=str, default=None)
+    return parser.parse_args()
 
 def load_model_and_checkpoint(model_path, ckpt_name):
     """Load both config and model state from checkpoint"""
@@ -31,18 +44,6 @@ def load_model_and_checkpoint(model_path, ckpt_name):
     
     # Find checkpoint path
     ckpt_path = model_path / "checkpoints" / ckpt_name
-    if not ckpt_path.exists():
-        checkpoints_dir = model_path / "checkpoints"
-        if checkpoints_dir.exists():
-            checkpoints = list(checkpoints_dir.glob("*.ckpt"))
-            if checkpoints:
-                ckpt_path = checkpoints[0]
-                print(f"Using {ckpt_path}")
-            else:
-                raise FileNotFoundError(f"No checkpoints found in {checkpoints_dir}")
-        else:
-            raise FileNotFoundError(f"Checkpoints directory not found")
-    
     print(f"Loading checkpoint from: {ckpt_path}")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -58,19 +59,23 @@ def load_model_and_checkpoint(model_path, ckpt_name):
     
     return config, checkpoint
 
-def main():    
+def main():
+    args = parse_args()
+    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
     # Load model configuration and checkpoint
-    config, checkpoint = load_model_and_checkpoint(MODEL_PATH, CKPT_NAME)
+    config, checkpoint = load_model_and_checkpoint(args.model_path, args.checkpoint)
 
     OmegaConf.set_struct(config, False)
 
-    config.paths.hydra_dir = str(Path(MODEL_PATH) / ".hydra")
-    config.paths.output_dir = str(Path(MODEL_PATH))
-    config.paths.work_dir = str(Path(MODEL_PATH))
+    config.paths.hydra_dir = str(Path(args.model_path) / ".hydra")
+    config.paths.output_dir = str(Path(args.model_path))
+    config.paths.work_dir = str(Path(args.model_path))
 
-    config.data.num_workers = {'train': 0, 'val': 0, 'test': NUM_WORKERS}
+    config.data.num_workers = {'train': 0, 'val': 0, 'test': args.num_workers}
     config.data.prefetch_factor = {'train': None, 'val': None, 'test': PREFETCH_FACTOR}
-    config.data.batch_size.test = BATCH_SIZE
+    config.data.batch_size.test = args.batch_size
 
     config.data.max_substructures_count = config.data.max_count_value 
     config.model.pretrained_structure_model_path = None
@@ -78,7 +83,7 @@ def main():
     config.data.data_dir = str(Path(config.paths.data_dir) / "multispectra")
 
     #loading alphabet and metadata from model path
-    alphabet = np.load(Path(MODEL_PATH) / "alphabet.npy", allow_pickle=True)
+    alphabet = np.load(Path(args.model_path) / "alphabet.npy", allow_pickle=True)
 
     # Set random seed for reproducibility
     pl.seed_everything(config.seed)
@@ -106,7 +111,7 @@ def main():
 
     test_dataloader = data_module.test_dataloader()
 
-    max_molecules = 100 # use all test for now..
+    max_molecules = args.max_molecules  # None means use all test samples
     
     pl_module.eval()
 
@@ -122,7 +127,7 @@ def main():
         mol_count += batch_size
 
         batch['spectra'] = batch['spectra'].to(device)        
-        if mol_count >= max_molecules:
+        if max_molecules is not None and mol_count >= max_molecules:
             break
 
         # enabling gradients at inference to avoid problems with nn.Transformer
@@ -137,9 +142,9 @@ def main():
             structure_features=structure_features,
             structure_features_mask=structure_features_mask,
             max_length = data_module.test_dataset.max_molecule_len,
-            temperature=TEMPERATURE,
-            top_k=TOP_K,
-            num_sequences=NUM_SEQUENCES
+            temperature=args.temperature,
+            top_k=args.top_k,
+            num_sequences=args.num_sequences
         )
 
         batch_size = generated_ids.shape[0]
@@ -188,17 +193,23 @@ def main():
 
     # Save generations and metrics to json file
     import json
-    output_file = Path(MODEL_PATH) / f"test_results-temperature-{TEMPERATURE}-top_k-{TOP_K}.json"
+    if args.output_file:
+        output_file = Path(args.output_file)
+    else:
+        output_file = Path(args.model_path) / f"test_results-temperature-{args.temperature}-top_k-{args.top_k}-num_seqs-{args.num_sequences}.json"
 
     results = {
         'generations': generations,
-        'temperature': TEMPERATURE,
-        'top_k': TOP_K
+        'temperature': args.temperature,
+        'top_k': args.top_k,
+        'num_sequences': args.num_sequences
     }
 
     #write results to file
     with open(output_file, 'w') as f:
         json.dump(results, f, indent=4)
+    
+    print(f"✅ Results saved to {output_file}")
 
 
 if __name__ == "__main__":
