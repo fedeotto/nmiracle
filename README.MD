@@ -94,18 +94,19 @@ python train.py \
 ### Testing on fragments-to-molecule task
 
 ```bash
-# Test Stage 1 (fragment-to-molecule)
-python test_sub2struct.py \
-  --model_path nmiracle/ckpts/nmiracle_sub2struct \
+python -m nmiracle.test_sub2struct \
+  --model_path nmiracle/ckpts/sub2struct \
   --checkpoint best.ckpt \
+  --temperature 1.0 \
+  --top_k 5 \
   --num_sequences 15
 ```
 
 ### Testing on spectra-to-molecule task
 
 ```bash
-python test_spec2struct.py \
-  --model_path nmiracle/ckpts/nmiracle_spec2struct_ir_hnmr_cnmr \
+python -m nmiracle.test_spec2struct \
+  --model_path nmiracle/ckpts/spec2struct_ir_hnmr_cnmr \
   --checkpoint epoch=295-val_loss=0.15.ckpt \
   --temperature 1.0 \
   --top_k 5 \
