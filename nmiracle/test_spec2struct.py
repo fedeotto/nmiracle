@@ -1,5 +1,4 @@
 import torch
-import argparse
 import pytorch_lightning as pl
 from pathlib import Path
 from omegaconf import OmegaConf
@@ -12,12 +11,12 @@ import os
 from tqdm import tqdm
 import numpy as np
 
-rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
+# rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 
 os.environ['HYDRA_FULL_ERROR']     = '1'
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-MODEL_PATH = "nmiracle/ckpts/nmiracle_spec2struct_ir_hnmr_cnmr"
+MODEL_PATH = "nmiracle/ckpts/spec2struct_ir_hnmr_cnmr"
 CKPT_NAME  = "epoch=295-val_loss=0.15.ckpt"
 NUM_WORKERS = 0  # Set to 0 for no multiprocessing, adjust as needed
 PREFETCH_FACTOR = None  # Set to None for no prefetching, adjust as needed
@@ -76,12 +75,10 @@ def main():
     config.data.max_substructures_count = config.data.max_count_value 
     config.model.pretrained_structure_model_path = None
     config.paths.data_dir = 'datasets'          #a few adjustment (things called with different names when model was trained.)
-    config.data.data_dir = str(Path(config.paths.data_dir) / "alberts")
+    config.data.data_dir = str(Path(config.paths.data_dir) / "multispectra")
 
     #loading alphabet and metadata from model path
     alphabet = np.load(Path(MODEL_PATH) / "alphabet.npy", allow_pickle=True)
-
-    max_molecule_len =config.data.max_molecule_len
 
     # Set random seed for reproducibility
     pl.seed_everything(config.seed)
@@ -145,8 +142,8 @@ def main():
             num_sequences=NUM_SEQUENCES
         )
 
-        batch_size, num_seqs, seq_len = generated_ids.shape
-        
+        batch_size = generated_ids.shape[0]
+
         # Decode all generated sequences for each sample
         generated_smiles_lists = []
         generated_scores_lists = []

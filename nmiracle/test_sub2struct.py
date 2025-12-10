@@ -1,9 +1,7 @@
 import torch
-import argparse
 import pytorch_lightning as pl
 from pathlib import Path
 from omegaconf import OmegaConf
-import rootutils
 from common.eval_utils import canonicalize_smiles, is_valid_smiles
 from nmiracle.models.pl_module import Sub2StructModule
 from nmiracle.data.datamodule import SpectralDataModule
@@ -11,8 +9,6 @@ from nmiracle.data.tokenizer import BasicSmilesTokenizer
 import os
 from tqdm import tqdm
 import numpy as np
-
-rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 
 os.environ['HYDRA_FULL_ERROR']     = '1'
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -59,7 +55,7 @@ def load_model_and_checkpoint(model_path, ckpt_name):
     
     return config, checkpoint
 
-def main():    
+def main():
     # Load model configuration and checkpoint
     config, checkpoint = load_model_and_checkpoint(MODEL_PATH, CKPT_NAME)
 
