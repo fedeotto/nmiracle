@@ -1,9 +1,8 @@
 # NMIRacle: Multi-modal Generative Molecular Elucidation from IR and NMR Spectra
 
 <img src="assets/nmiracle.png" alt="NMIRacle Overview Diagram" width="600"/>
-
-**NMIRacle** (NMR-IR oracle) is a multi-modal generative framework for *de novo* molecular structure elucidation from spectroscopic data. The model learns to generate molecular structures (SMILES) directly from raw IR, ¹H-NMR, and ¹³C-NMR spectra through a two-stage training approach that combines fragment-based molecular priors with multi-spectral conditioning.
 ---
+**NMIRacle** (NMR-IR oracle) is a multi-modal generative framework for *de novo* molecular structure elucidation from spectroscopic data. The model learns to generate molecular structures (SMILES) directly from raw IR, ¹H-NMR, and ¹³C-NMR spectra through a two-stage training approach that combines fragment-based molecular priors with multi-spectral conditioning.
 
 ## Installation
 
