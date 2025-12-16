@@ -71,14 +71,6 @@ python -m nmiracle.train \
   logger.wandb.enabled=true
 ```
 
-### Resuming training
-
-```bash
-python train.py \
-  resume.checkpoint_path=/path/to/checkpoint.ckpt \
-  trainer.max_epochs=300
-```
-
 ## 🧪 Inference
 
 ### Testing on fragments-to-molecule task
