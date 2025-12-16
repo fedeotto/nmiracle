@@ -2,19 +2,7 @@
 
 <img src="assets/nmiracle.png" alt="NMIRacle Overview Diagram" width="800"/>
 
-**NMIRacle** (NMr-IR orACLE) is a deep learning framework for *de novo* molecular structure elucidation from multi-modal spectroscopic data. The model learns to generate molecular structures (SMILES) directly from raw IR, ¹H-NMR, and ¹³C-NMR spectra through a two-stage training approach that combines fragment-based molecular priors with multi-spectral conditioning.
-
----
-
-## 🔬 Overview
-
-Molecular structure elucidation from spectroscopy is a fundamental challenge in chemistry. NMIRacle addresses this by:
-
-- **Multi-modal learning**: Integrates IR, ¹H-NMR, and ¹³C-NMR spectra through hierarchical attention mechanisms
-- **Fragment-based priors**: Learns count-aware fragment representations that capture both fragment identities and occurrences
-- **Two-stage training**: Pre-trains on fragment-to-molecule reconstruction, then fine-tunes with spectral conditioning
-- **Minimal pre-processing**: Operates directly on raw spectroscopic intensity arrays
-
+**NMIRacle** (NMr-IR orACLE) is a multi-modal generative framework for *de novo* molecular structure elucidation from spectroscopic data. The model learns to generate molecular structures (SMILES) directly from raw IR, ¹H-NMR, and ¹³C-NMR spectra through a two-stage training approach that combines fragment-based molecular priors with multi-spectral conditioning.
 ---
 
 ## 📦 Data Preparation
@@ -46,6 +34,8 @@ The `spectra.h5` contains concatenated (in order):
 - `ir`: IR spectra (1,800 features)
 - `hnmr`: ¹H-NMR spectra (10,000 features)
 - `cnmr`: ¹³C-NMR spectra (10,000 features)
+
+Dataset files are available at the following [link](https://huggingface.co/datasets/fedeotto/nmiracle-datasets).
 ---
 
 ## 🎓 Training
@@ -112,6 +102,8 @@ python -m nmiracle.test_spec2struct \
   --top_k 5 \
   --num_sequences 15
 ```
+
+We provide checkpoints of trained models at the following [link](https://huggingface.co/fedeotto/miracle-models).
 ---
 
 ### Running Evaluation
