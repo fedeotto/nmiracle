@@ -1,4 +1,4 @@
-# NMIRacle: Scalable Structure Elucidation from IR and NMR Spectra
+# NMIRacle: Multi-modal Generative Molecular Elucidation from IR and NMR Spectra
 
 <img src="assets/nmiracle.png" alt="NMIRacle Overview Diagram" width="800"/>
 
