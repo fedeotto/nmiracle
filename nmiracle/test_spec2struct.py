@@ -3,7 +3,6 @@ import pytorch_lightning as pl
 from pathlib import Path
 from omegaconf import OmegaConf
 from common.eval_utils import is_valid_smiles, canonicalize_smiles
-import rootutils
 from nmiracle.models.pl_module import Spec2StructModule
 from nmiracle.data.datamodule import SpectralDataModule
 from nmiracle.data.tokenizer import BasicSmilesTokenizer
@@ -16,7 +15,7 @@ import argparse
 os.environ['HYDRA_FULL_ERROR']     = '1'
 
 MODEL_PATH = "nmiracle/ckpts/spec2struct_ir_hnmr"
-CKPT_NAME  = "epoch=295-val_loss=0.15.ckpt"
+CKPT_NAME  = "epoch=298-val_loss=0.16.ckpt"
 NUM_WORKERS = 0  # Set to 0 for no multiprocessing, adjust as needed
 PREFETCH_FACTOR = None  # Set to None for no prefetching, adjust as needed
 BATCH_SIZE = 8  # Adjust batch size as needed
@@ -43,7 +42,7 @@ def load_model_and_checkpoint(model_path, ckpt_name):
     model_path = Path(model_path)
     
     # Find checkpoint path
-    ckpt_path = model_path / "checkpoints" / ckpt_name
+    ckpt_path = model_path / ckpt_name
     print(f"Loading checkpoint from: {ckpt_path}")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -83,7 +82,7 @@ def main():
     config.data.data_dir = str(Path(config.paths.data_dir) / "multispectra")
 
     #loading alphabet and metadata from model path
-    alphabet = np.load(Path(args.model_path) / "alphabet.npy", allow_pickle=True)
+    alphabet = np.load(Path('common') / "alphabet.npy", allow_pickle=True)
 
     # Set random seed for reproducibility
     pl.seed_everything(config.seed)

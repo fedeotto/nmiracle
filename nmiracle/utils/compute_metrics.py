@@ -16,7 +16,7 @@ import os
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
 
-RESULTS_PATH = 'nmiracle/ckpts/nmiracle_spec2struct_ir_hnmr_cnmr/'
+RESULTS_PATH = 'nmiracle/ckpts/pec2struct_ir_hnmr_cnmr/'
 RESULTS_NAME = 'test_results-temperature-1.0-top_k-5.json'
 
 def main():
