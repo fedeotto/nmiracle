@@ -57,9 +57,9 @@ class SpectralDataModule(pl.LightningDataModule):
         common_args = {
             "data_dir": data_dir,
             "tokenizer": self.tokenizer,
-            "max_molecule_len": self.config.max_molecule_len, 
-            "max_substructures_len": self.config.max_substructures_len,
-            "max_substructures_count": self.config.max_substructures_count
+            "max_molecule_len": self.config.dataset.max_molecule_len, 
+            "max_substructures_len": self.config.dataset.max_substructures_len,
+            "max_substructures_count": self.config.dataset.max_substructures_count
         }
 
         if stage == "fit" or stage is None:

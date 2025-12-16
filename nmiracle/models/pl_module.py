@@ -73,7 +73,7 @@ class Sub2StructModule(BaseModule):
             structure_kwargs=config.model.structure_model,
             pretrained_structure_path=config.model.pretrained_structure_model_path,
             num_substructures=config.data.num_substructures,
-            max_substructures_count=config.data.max_substructures_count,
+            max_substructures_count=config.data.dataset.max_substructures_count,
         )
 
     def training_step(self, batch, batch_idx):

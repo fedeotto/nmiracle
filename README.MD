@@ -42,14 +42,13 @@ Dataset files are available at the following [link](https://huggingface.co/datas
 
 ### Stage 1: fragment-to-molecule pre-training
 
-Train the model to reconstruct molecules from fragment representations:
+Train the model to reconstruct molecules from count-aware fragment representations:
 
 ```bash
 python -m nmiracle.train \
   training_stage=sub2struct \
-  data.dataset_name=pretrain_dataset \
-  data.batch_size.train=256 \
-  trainer.max_epochs=100 \
+  data/dataset=pretrain_dataset \
+  trainer.max_epochs=500 \
   logger.wandb.enabled=true
 ```
 
@@ -58,15 +57,13 @@ python -m nmiracle.train \
 Fine-tune with spectral conditioning (requires Stage 1 checkpoint):
 
 ```bash
-python -m nmiracle.train.py \
+python -m nmiracle.train \
   training_stage=spec2struct \
-  data.dataset_name=alberts_dataset \
+  data/dataset=multispectra_dataset \
   data.use_ir=true \
   data.use_hnmr=true \
-  data.use_cnmr=true \
+  data.use_cnmr=false \
   model.pretrained_structure_model_path=/path/to/stage1/checkpoint.ckpt \
-  model.use_multitask=true \
-  data.batch_size.train=128 \
   trainer.max_epochs=300 \
   logger.wandb.enabled=true
 ```
