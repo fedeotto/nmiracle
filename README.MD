@@ -39,7 +39,6 @@ The `spectra.h5` contains concatenated (in order):
 - `cnmr`: ¹³C-NMR spectra (10,000 features)
 
 Dataset files are available at the following [link](https://huggingface.co/datasets/fedeotto/nmiracle-datasets).
----
 
 ## 🎓 Training
 
