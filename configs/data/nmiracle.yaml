@@ -1,7 +1,7 @@
-# Data paths
+# Dataset paths
 defaults:
   - _self_
-  - multispectra_dataset
+  - dataset: multispectra_dataset
 
 seed: 42
 
@@ -10,7 +10,6 @@ use_ir: true
 use_hnmr: true
 use_cnmr: true
 use_substructures: true
-use_formula: true
 cnmr_binary: true
 
 num_substructures: 991

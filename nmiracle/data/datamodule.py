@@ -18,7 +18,7 @@ class SpectralDataModule(pl.LightningDataModule):
         self.num_workers = config.num_workers
         self.prefetch_factor = config.prefetch_factor
         self.tokenizer = tokenizer
-        self.training_stage = config.training_stage
+        self.training_stage = config.dataset.training_stage
         self.seed = config.seed
         
         # Set up data splits
@@ -43,7 +43,7 @@ class SpectralDataModule(pl.LightningDataModule):
 
     def _setup_pretrain_dataset(self, stage=None):
         # Get paths from config
-        data_dir = self.config.data_dir
+        data_dir = self.config.dataset.data_dir
 
         # Load split indices
         splits_path = os.path.join(data_dir, "split_indices.p")
@@ -72,7 +72,7 @@ class SpectralDataModule(pl.LightningDataModule):
     def _setup_multispectra_dataset(self, stage=None):
         """Set up datasets for spectra-to-all training"""        
 
-        data_dir = self.config.data_dir
+        data_dir = self.config.dataset.data_dir
 
         # Load split indices
         splits_path = os.path.join(data_dir, "split_indices.p")
@@ -85,15 +85,15 @@ class SpectralDataModule(pl.LightningDataModule):
         common_args = {
             'data_dir': data_dir,
             'tokenizer': self.tokenizer,
-            'n_ir_features': self.config.n_ir_features,
-            'n_hnmr_features': self.config.n_hnmr_features,
-            'n_cnmr_features': self.config.n_cnmr_features,
-            'max_molecule_len': self.config.max_molecule_len,
+            'n_ir_features': self.config.dataset.n_ir_features,
+            'n_hnmr_features': self.config.dataset.n_hnmr_features,
+            'n_cnmr_features': self.config.dataset.n_cnmr_features,
+            'max_molecule_len': self.config.dataset.max_molecule_len,
             'use_ir': self.config.use_ir,
             'use_hnmr': self.config.use_hnmr,
             'use_cnmr': self.config.use_cnmr,
             'cnmr_binary': self.config.cnmr_binary,
-            'cnmr_binary_bins': self.config.cnmr_binary_bins,
+            'cnmr_binary_bins': self.config.dataset.cnmr_binary_bins,
         }
         
         if stage == 'fit' or stage is None:

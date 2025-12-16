@@ -23,12 +23,12 @@ def main(config: DictConfig):
 
     # Check pairing: spec2struct requires multispectra_dataset
     if config.training_stage == 'spec2struct':
-        assert config.data.dataset_name == 'multispectra_dataset', \
+        assert config.data.dataset.dataset_name == 'multispectra_dataset', \
             "Training stage 'spec2struct' requires 'multispectra_dataset'"
     
     # Check pairing: sub2struct requires pretrain_dataset
     if config.training_stage == 'sub2struct':
-        assert config.data.dataset_name == 'pretrain_dataset', \
+        assert config.data.dataset.dataset_name == 'pretrain_dataset', \
             "Training stage 'sub2struct' requires 'pretrain_dataset'"
 
     # Set random seed for reproducibility
@@ -44,11 +44,11 @@ def main(config: DictConfig):
     #Setting up the tokenizer
     tokenizer = BasicSmilesTokenizer()
 
-    if config.data.alphabet is None:
-        config.data.alphabet = Path(os.environ['PROJECT_ROOT'] / 'common' / 'alphabet.npy')
+    if config.data.dataset.alphabet is None:
+        config.data.dataset.alphabet = Path(os.environ['PROJECT_ROOT'] / 'common' / 'alphabet.npy')
 
     alphabet  = generate_or_load_alphabet(config,
-                                          alphabet_path=config.data.alphabet,
+                                          alphabet_path=config.data.dataset.alphabet,
                                           tokenizer=tokenizer)
     tokenizer.setup_alphabet(alphabet)
 

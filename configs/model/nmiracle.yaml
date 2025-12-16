@@ -1,28 +1,8 @@
-pretrained_structure_model_path: /Users/federico/Desktop/imperial/nmiracle_ready/nmiracle/ckpts/sub2struct/checkpoints/epoch=439-val_loss=0.04.ckpt
-
+pretrained_structure_model_path: null #/Users/federico/Desktop/imperial/nmiracle_ready/nmiracle/ckpts/sub2struct/checkpoints/epoch=439-val_loss=0.04.ckpt
 use_multitask: true
 
 d_model: 128
 
-# Spectrum encoder configuration
-spectrum_encoder:
-  d_model: ${model.d_model}
-  use_ir: ${data.use_ir}
-  use_hnmr: ${data.use_hnmr}
-  use_cnmr: ${data.use_cnmr}
-  n_ir_features: ${data.n_ir_features}
-  n_hnmr_features: ${data.n_hnmr_features}
-  n_cnmr_features: ${data.n_cnmr_features}
-
-  nhead: 4
-  num_encoder_layers: 4
-  dim_feedforward: 1024
-  dropout: 0.1
-  layer_norm_eps: 1e-05
-  batch_first: true
-  norm_first: false
-
-# Structure prediction model (transformer)
 structure_model:
   d_model: ${model.d_model}
   nhead: 8
@@ -47,15 +27,14 @@ multispectra_encoder:
   kernel_size_2: 9
   add_pos_encode: true
   fusion_scheme: transformer
-  shared_encoder: false
-  n_ir_features: ${data.n_ir_features}
-  n_hnmr_features: ${data.n_hnmr_features}
-  n_cnmr_features: ${data.n_cnmr_features}
+  n_ir_features: ${data.dataset.n_ir_features}
+  n_hnmr_features: ${data.dataset.n_hnmr_features}
+  n_cnmr_features: ${data.dataset.n_cnmr_features}
   use_ir: ${data.use_ir}
   use_hnmr: ${data.use_hnmr}
   use_cnmr: ${data.use_cnmr}
   cnmr_binary: ${data.cnmr_binary}
-  cnmr_binary_bins: ${data.cnmr_binary_bins}
+  cnmr_binary_bins: ${data.dataset.cnmr_binary_bins}
 
 # Optimization
 optimizer:

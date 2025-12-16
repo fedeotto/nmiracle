@@ -128,7 +128,7 @@ class Spec2StructModule(BaseModule):
                 multispectra_encoder_kwargs=config.model.multispectra_encoder,
                 structure_model_kwargs=config.model.structure_model,
                 num_substructures=config.data.num_substructures,
-                max_substructures_count = config.data.max_substructures_count,
+                max_substructures_count = config.data.dataset.max_substructures_count,
             )
         else:
             self.model = Spectra2Structure(
