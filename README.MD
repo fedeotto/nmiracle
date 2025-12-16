@@ -95,7 +95,7 @@ python -m nmiracle.test_spec2struct \
   --num_sequences 15
 ```
 
-We provide checkpoints of trained models at the following [link](https://huggingface.co/fedeotto/miracle-models).
+  We provide checkpoints of trained models at the following [link](https://huggingface.co/fedeotto/miracle-models).
 ---
 
 ### Running Evaluation
