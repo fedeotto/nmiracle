@@ -60,7 +60,6 @@ def calculate_rdkit_similarity(smiles1, smiles2):
     return DataStructs.TanimotoSimilarity(fp1, fp2)
 
 def calculate_maccs_similarity(smiles1, smiles2):
-    """Compute similarity between molecules using MACCS keys."""    
     if isinstance(smiles1, Chem.Mol) and isinstance(smiles2, Chem.Mol):
         mol1 = smiles1
         mol2 = smiles2
@@ -78,7 +77,6 @@ def calculate_maccs_similarity(smiles1, smiles2):
 
 
 def is_valid_smiles(smiles):
-    """Check if SMILES is valid."""
     try:
         mol = Chem.MolFromSmiles(smiles)
         return mol is not None
@@ -133,5 +131,5 @@ def calculate_tanimoto_similarity(gen_smiles, true_smiles, use_chirality=False):
 def canonicalize_smiles(smiles):
     if smiles is None:
         return None
-    mol = Chem.MolFromSmiles(smiles, sanitize=True)
+    mol = Chem.MolFromSmiles(smiles)
     return Chem.MolToSmiles(mol, canonical=True) if mol else None
