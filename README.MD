@@ -2,8 +2,10 @@
 
 <img src="assets/nmiracle.png" alt="NMIRacle Overview Diagram" width="800"/>
 
-**NMIRacle** (NMr-IR orACLE) is a multi-modal generative framework for *de novo* molecular structure elucidation from spectroscopic data. The model learns to generate molecular structures (SMILES) directly from raw IR, ¹H-NMR, and ¹³C-NMR spectra through a two-stage training approach that combines fragment-based molecular priors with multi-spectral conditioning.
+**NMIRacle** (NMR-IR oracle) is a multi-modal generative framework for *de novo* molecular structure elucidation from spectroscopic data. The model learns to generate molecular structures (SMILES) directly from raw IR, ¹H-NMR, and ¹³C-NMR spectra through a two-stage training approach that combines fragment-based molecular priors with multi-spectral conditioning.
 ---
+
+## Installation
 
 ## 📦 Data Preparation
 
@@ -136,7 +138,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - Built with [PyTorch](https://pytorch.org/) and [PyTorch Lightning](https://lightning.ai/)
-- Inspired by [NMR2Struct](https://github.com/MarklandGroup/NMR2Struct) and related work
+- Inspired by [NMR2Struct](https://github.com/MarklandGroup/NMR2Struct) and related work.
 
 
 **⭐ If you find NMIRacle useful, please star the repository!**
