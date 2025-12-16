@@ -37,7 +37,6 @@ def flatten_dataset_config(config):
 def get_wandb_name(config):
     # Start with base model name
     name_parts = [config.model_name, config.data.training_stage, config.data.dataset_name]
-    
     # Add active modalities with underscore separator
     modality_parts = []
     if hasattr(config.data, 'use_ir') and config.data.use_ir:
@@ -71,11 +70,7 @@ def get_wandb_name(config):
     # Add formula as a separate flag
     if hasattr(config.data, 'use_formula'):
         name_parts.append(f"formula-{str(config.data.use_formula).lower()}")
-    
-    # Add architecture flags
-    if hasattr(config.model, 'shared_encoder'):
-        name_parts.append(f"shared_enc-{str(config.model.shared_encoder).lower()}")
-        
+
     if hasattr(config.model, 'fusion_scheme'):
         name_parts.append(f"fusion-{config.model.fusion_scheme}")
     
