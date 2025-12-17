@@ -35,7 +35,7 @@ Dataset files are available at the following [link](https://huggingface.co/datas
 
 ## 🎓 Training
 
-### Stage 1: fragment-to-molecule pre-training
+### Stage 1: fragments-to-molecule pre-training
 
 Train the model to reconstruct molecules from count-aware fragment representations:
 
