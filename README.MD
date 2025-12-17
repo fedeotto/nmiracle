@@ -10,8 +10,6 @@
 
 ## 📦 Data Preparation
 
-### Dataset Structure
-
 NMIRacle expects data in the following structure:
 
 ```
@@ -27,8 +25,6 @@ datasets/
     ├── substructure_counts.h5         # Fragment compositions
     └── split_indices.p                # Train/val/test splits
 ```
-
-### Spectra Format (HDF5)
 
 The `spectra.h5` contains concatenated (in order):
 - `ir`: IR spectra (1,800 features)
