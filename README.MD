@@ -89,15 +89,6 @@ python -m nmiracle.test_spec2struct \
 
 We provide checkpoints of trained models at the following [link](https://huggingface.co/fedeotto/miracle-models).
 
-### Running Evaluation
-
-```bash
-# Compute comprehensive metrics
-python nmiracle/analysis/compute_metrics.py \
-  --predictions_file results/predictions.json \
-  --ground_truth_file datasets/alberts/test.json \
-  --output_dir results/metrics/
-```
 ---
 
 ## 🤝 Citation
@@ -105,11 +96,13 @@ python nmiracle/analysis/compute_metrics.py \
 If you use NMIRacle in your research, please cite:
 
 ```bibtex
-@article{nmiracle2025,
-  title={NMIRacle: Scalable Structure Elucidation from IR and NMR Spectra},
-  author={Your Name et al.},
-  journal={arXiv preprint arXiv:XXXX.XXXXX},
-  year={2025}
+@misc{ottomano2025nmiraclemultimodalgenerativemolecular,
+      title={NMIRacle: Multi-modal Generative Molecular Elucidation from IR and NMR Spectra}, 
+      author={Federico Ottomano and Yingzhen Li and Alex M. Ganose},
+      year={2025},
+      eprint={2512.19733},
+      archivePrefix={arXiv},
+      url={https://arxiv.org/abs/2512.19733}, 
 }
 ```
 
