@@ -1,13 +1,8 @@
 import os
 import numpy as np
-import lmdb
-import pickle
-import zlib
 from nmiracle.data.tokenizer import BasicSmilesTokenizer
 from typing import Set, Optional
 from omegaconf import DictConfig
-from pathlib import Path
-
 
 def generate_alphabet(
     config: DictConfig,

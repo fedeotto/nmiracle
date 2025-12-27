@@ -58,14 +58,6 @@ def main(config: DictConfig):
     # Setting up loggers
     loggers = []
     
-    # Always add CSV logger
-    csv_logger = pl.loggers.CSVLogger(
-        save_dir=logs_dir, 
-        name="",  
-        version=""
-    )
-    loggers.append(csv_logger)
-    
     # Add wandb logger if enabled
     if config.logger.wandb.enabled:
         # wandb_name = f"{config.logger.wandb.name}"

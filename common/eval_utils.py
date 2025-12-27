@@ -1,5 +1,5 @@
 from rdkit import Chem, DataStructs
-from rdkit.Chem import AllChem, Descriptors
+from rdkit.Chem import AllChem
 import Levenshtein
 from common.utils import selfies_to_smiles
 from rdkit import Chem, DataStructs

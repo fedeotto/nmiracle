@@ -1,16 +1,6 @@
 import torch
-from common.eval_utils import (canonicalize_smiles, 
-                                calculate_tanimoto_similarity, 
-                                is_valid_smiles,
-                                compute_mces_distance,
-                                compute_levenshtein_distance, 
-                                calculate_maccs_similarity, calculate_rdkit_similarity
-                                )
 import torch.nn as nn
-from nmiracle.models.components.transformer_models import TransformerModel
 from nmiracle.models.base_model import BaseModel
-import torch.nn.functional as F
-import traceback
 
 class Sub2Structure(BaseModel):
     def __init__(
