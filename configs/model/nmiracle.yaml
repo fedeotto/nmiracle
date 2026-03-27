@@ -1,4 +1,4 @@
-pretrained_structure_model_path: null #/Users/federico/Desktop/imperial/nmiracle_ready/nmiracle/ckpts/sub2struct/checkpoints/epoch=439-val_loss=0.04.ckpt
+pretrained_structure_model_path: null
 use_multitask: true
 
 d_model: 128

@@ -308,4 +308,3 @@ class PreTrainDataset(Dataset):
     def __getitem__(self, idx):
         # Process data on-demand
         return self._process_single_sample(idx)
-    

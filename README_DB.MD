@@ -31,7 +31,7 @@ The `spectra.h5` contains concatenated (in order):
 - `hnmr`: ¹H-NMR spectra (10,000 features)
 - `cnmr`: ¹³C-NMR spectra (10,000 features)
 
-Dataset files are available at the following [link](https://huggingface.co/datasets/fedeotto/nmiracle-datasets).
+Dataset files are going to be released upon publication.
 
 ## 🎓 Training
 
@@ -87,31 +87,6 @@ python -m nmiracle.test_spec2struct \
   --num_sequences 15
 ```
 
-We provide checkpoints of trained models at the following [link](https://huggingface.co/fedeotto/miracle-models).
+Model checkpoints are going to be released upon publication.
 
 ---
-
-## 🤝 Citation
-
-If you use NMIRacle in your research, please cite:
-
-```bibtex
-@misc{ottomano2025nmiraclemultimodalgenerativemolecular,
-      title={NMIRacle: Multi-modal Generative Molecular Elucidation from IR and NMR Spectra}, 
-      author={Federico Ottomano and Yingzhen Li and Alex M. Ganose},
-      year={2025},
-      eprint={2512.19733},
-      archivePrefix={arXiv},
-      url={https://arxiv.org/abs/2512.19733}, 
-}
-```
-
----
-
-## 🙏 Acknowledgments
-
-- Built with [PyTorch](https://pytorch.org/) and [PyTorch Lightning](https://lightning.ai/)
-- Inspired by [NMR2Struct](https://github.com/MarklandGroup/NMR2Struct) and related work.
-
-
-**⭐ If you find NMIRacle useful, please star the repository!**
